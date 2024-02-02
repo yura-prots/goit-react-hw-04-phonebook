@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Component } from 'react';
 import { nanoid } from 'nanoid';
 
 import ContactsForm from 'components/ContactsForm';
@@ -9,28 +9,30 @@ import { Container, Wrapper, Title } from './App.styled';
 
 const storageKey = 'contacts';
 
-const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
+class App extends Component {
+  state = {
+    contacts: [],
+    filter: '',
+  };
 
-  const componentDidMount = () => {
+  componentDidMount() {
     const localContacts = localStorage.getItem(storageKey);
     const parsedContacts = JSON.parse(localContacts);
 
     if (parsedContacts) {
       this.setState({ contacts: parsedContacts });
     }
-  };
+  }
 
-  const componentDidUpdate = (prevProps, prevState) => {
+  componentDidUpdate(prevProps, prevState) {
     const { contacts } = this.state;
 
     if (contacts !== prevState.contacts) {
       localStorage.setItem(storageKey, JSON.stringify(contacts));
     }
-  };
+  }
 
-  const addContact = newContact => {
+  addContact = newContact => {
     const isDuplicate = this.state.contacts.find(
       contact => contact.name === newContact.name
     );
@@ -53,11 +55,11 @@ const App = () => {
     });
   };
 
-  const findContact = searchQuery => {
+  findContact = searchQuery => {
     this.setState({ filter: searchQuery });
   };
 
-  const deleteContact = id => {
+  deleteContact = id => {
     this.setState(prevState => {
       return {
         contacts: prevState.contacts.filter(contact => contact.id !== id),
@@ -65,25 +67,32 @@ const App = () => {
     });
   };
 
-  const visibleContacts = contacts.filter(contact => {
-    return contact.name.toLowerCase().includes(filter.toLowerCase());
-  });
+  render() {
+    const { contacts, filter } = this.state;
 
-  return (
-    <Container>
-      <Title>Phonebook</Title>
-      <ContactsForm onAdd={addContact} />
+    const visibleContacts = contacts.filter(contact => {
+      return contact.name.toLowerCase().includes(filter.toLowerCase());
+    });
 
-      {contacts.length > 0 && (
-        <Wrapper>
-          <Title>Contacts</Title>
-          <ContactsFilter filter={filter} toFind={findContact} />
+    return (
+      <Container>
+        <Title>Phonebook</Title>
+        <ContactsForm onAdd={this.addContact} />
 
-          <ContactsList contacts={visibleContacts} toDelete={deleteContact} />
-        </Wrapper>
-      )}
-    </Container>
-  );
-};
+        {contacts.length > 0 && (
+          <Wrapper>
+            <Title>Contacts</Title>
+            <ContactsFilter filter={filter} toFind={this.findContact} />
+
+            <ContactsList
+              contacts={visibleContacts}
+              toDelete={this.deleteContact}
+            />
+          </Wrapper>
+        )}
+      </Container>
+    );
+  }
+}
 
 export default App;

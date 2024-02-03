@@ -13,25 +13,24 @@ const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
 
-  const componentDidMount = () => {
-    const localContacts = localStorage.getItem(storageKey);
-    const parsedContacts = JSON.parse(localContacts);
+  // const componentDidMount = () => {
+  //   const localContacts = localStorage.getItem(storageKey);
+  //   const parsedContacts = JSON.parse(localContacts);
 
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  };
+  //   if (parsedContacts) {
+  //     setContacts(parsedContacts);
+  //   }
+  // };
 
-  const componentDidUpdate = (prevProps, prevState) => {
-    const { contacts } = this.state;
+  // const componentDidUpdate = (prevProps, prevState) => {
 
-    if (contacts !== prevState.contacts) {
-      localStorage.setItem(storageKey, JSON.stringify(contacts));
-    }
-  };
+  //   if (contacts !== prevState.contacts) {
+  //     localStorage.setItem(storageKey, JSON.stringify(contacts));
+  //   }
+  // };
 
   const addContact = newContact => {
-    const isDuplicate = this.state.contacts.find(
+    const isDuplicate = contacts.find(
       contact => contact.name === newContact.name
     );
 
@@ -40,30 +39,21 @@ const App = () => {
       return;
     }
 
-    this.setState(prevState => {
-      return {
-        contacts: [
-          ...prevState.contacts,
-          {
-            ...newContact,
-            id: nanoid(),
-          },
-        ],
-      };
-    });
+    setContacts(state => [...state, { ...newContact, id: nanoid() }]);
   };
 
   const findContact = searchQuery => {
-    this.setState({ filter: searchQuery });
+    setFilter(searchQuery);
   };
 
   const deleteContact = id => {
-    this.setState(prevState => {
-      return {
-        contacts: prevState.contacts.filter(contact => contact.id !== id),
-      };
+    setContacts(state => {
+      console.log(id);
+      console.log(state);
+      // state.filter(contact => contact.id !== id);
     });
   };
+  // prevState.contacts.filter(contact => contact.id !== id)
 
   const visibleContacts = contacts.filter(contact => {
     return contact.name.toLowerCase().includes(filter.toLowerCase());

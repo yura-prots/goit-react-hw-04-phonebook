@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 
 import ContactsForm from 'components/ContactsForm';
@@ -7,27 +7,20 @@ import ContactsFilter from 'components/ContactsFilter';
 
 import { Container, Wrapper, Title } from './App.styled';
 
-const storageKey = 'contacts';
+const storageKey = 'local-contacts';
+const localContacts = JSON.parse(localStorage.getItem(storageKey));
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
 
-  // const componentDidMount = () => {
-  //   const localContacts = localStorage.getItem(storageKey);
-  //   const parsedContacts = JSON.parse(localContacts);
+  useEffect(() => {
+    if (localContacts) setContacts(localContacts);
+  }, []);
 
-  //   if (parsedContacts) {
-  //     setContacts(parsedContacts);
-  //   }
-  // };
-
-  // const componentDidUpdate = (prevProps, prevState) => {
-
-  //   if (contacts !== prevState.contacts) {
-  //     localStorage.setItem(storageKey, JSON.stringify(contacts));
-  //   }
-  // };
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(contacts));
+  }, [contacts]);
 
   const addContact = newContact => {
     const isDuplicate = contacts.find(
@@ -47,13 +40,8 @@ const App = () => {
   };
 
   const deleteContact = id => {
-    setContacts(state => {
-      console.log(id);
-      console.log(state);
-      // state.filter(contact => contact.id !== id);
-    });
+    setContacts(contacts.filter(contact => contact.id !== id));
   };
-  // prevState.contacts.filter(contact => contact.id !== id)
 
   const visibleContacts = contacts.filter(contact => {
     return contact.name.toLowerCase().includes(filter.toLowerCase());

@@ -11,12 +11,8 @@ const storageKey = 'local-contacts';
 const localContacts = JSON.parse(localStorage.getItem(storageKey));
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(localContacts);
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    if (localContacts) setContacts(localContacts);
-  }, []);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(contacts));
@@ -40,7 +36,7 @@ const App = () => {
   };
 
   const deleteContact = id => {
-    setContacts(contacts.filter(contact => contact.id !== id));
+    contacts.filter(contact => setContacts(contact.id !== id));
   };
 
   const visibleContacts = contacts.filter(contact => {

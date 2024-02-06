@@ -36,7 +36,7 @@ const App = () => {
   };
 
   const deleteContact = id => {
-    contacts.filter(contact => setContacts(contact.id !== id));
+    setContacts(state => state.filter(contact => contact.id !== id));
   };
 
   const visibleContacts = contacts.filter(contact => {
